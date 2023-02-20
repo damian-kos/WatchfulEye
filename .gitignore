@@ -1,0 +1,7 @@
+**/__pycache__
+*.log
+**/build/
+myenv/
+.vscode/
+safe_soft_control/build.py
+packages.txt
