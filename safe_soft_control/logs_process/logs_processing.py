@@ -8,7 +8,7 @@ from email.mime.base import MIMEBase
 
 class Logs:
     def __init__(self) -> None:
-        self.path = Path(__file__).parent / "logs"
+        self.path = Path.cwd() / "logs_process" / "logs"
         self.files_list = self.get_logs_from_dir()
         self.current_log = self.determine_current_log()
         self.past_logs = self.get_past_logs()
@@ -24,12 +24,16 @@ class Logs:
     def get_logs_from_dir(self) -> list:  # Works
         files = os.listdir(self.path)
         files_list = [
-            file for file in files if os.path.isfile(os.path.join(self.path, file))
+            file
+            for file in files
+            if os.path.isfile(os.path.join(self.path, file))
         ]
         return files_list
 
     def create_new_email(self):
-        self.email_message = SendEmail(self.email_subject, self.email_message_content)
+        self.email_message = SendEmail(
+            self.email_subject, self.email_message_content
+        )
 
     def determine_current_log(self) -> str:
         timestamp = datetime.datetime.now().strftime("%Y%m%d")
@@ -54,12 +58,9 @@ class Logs:
                 sent_logs = json.load(f)
 
                 for log in sent_logs:
-
                     if log in log_list:
-
                         log_list.remove(log)
             except:
-
                 pass
 
     def check_history_logs_content(self, logs_list):
@@ -74,14 +75,14 @@ class Logs:
 
     def add_send_log_to_json(self, log_file, is_empty):
         path = Path(__file__).parent / "logs_history.json"
-        with open(path, "r", encoding='utf-8') as file:
+        with open(path, "r", encoding="utf-8") as file:
             try:
                 sent_logs_history = json.load(file)
             except json.decoder.JSONDecodeError:
                 sent_logs_history = {}
 
         sent_logs_history[log_file] = is_empty
-        with open(path, "w", encoding='utf-8') as file:
+        with open(path, "w", encoding="utf-8") as file:
             json.dump(sent_logs_history, file)
 
     def check_log_length(self, log):
@@ -97,9 +98,10 @@ class Logs:
         self.current_log_lines = self.check_lines_in_logs(self.current_log)
 
     def current_log_attaching(self):
-        updated_lines_in_current_log = self.check_lines_in_logs(self.current_log)
+        updated_lines_in_current_log = self.check_lines_in_logs(
+            self.current_log
+        )
         if updated_lines_in_current_log > self.current_log_lines:
-
             self.attach_log(self.current_log)
             self.current_log_lines = updated_lines_in_current_log
 
