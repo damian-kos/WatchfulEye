@@ -4,7 +4,6 @@ import os
 from env.configure_env import Env_Configure
 
 
-
 class Gui:
     def __init__(self) -> None:
         self.remaining = 10
@@ -45,7 +44,9 @@ class Gui:
                 dpg.add_input_text(tag=option, enabled=False)
             elif count == 3:
                 dpg.add_input_text(tag=option, enabled=False)
-        dpg.add_button(label="Save", tag="finish", callback=self.save_button_callback)
+        dpg.add_button(
+            label="Save", tag="finish", callback=self.save_button_callback
+        )
 
     def checkbox_callback(self):
         # Disable text input windows since user didn't want mails to be send.
@@ -71,7 +72,6 @@ class Gui:
         if self.configure_app_after_save():
             self.window_after_save()
 
-
     def configure_app_after_save(self):
         func_options = [
             self.menu.will_to_send_emails,
@@ -91,17 +91,20 @@ class Gui:
                     # print(f"ERROR {setting.__func__.__name__}")
                     with dpg.window(modal=True, label="error") as error:
                         dpg.add_text(f"{name}")
-                        dpg.add_button(label="OK", user_data=(name), width=100, callback=lambda: dpg.delete_item(error))
+                        dpg.add_button(
+                            label="OK",
+                            user_data=(name),
+                            width=100,
+                            callback=lambda: dpg.delete_item(error),
+                        )
                     return False
             return True
-   
 
     def app_set(self):
         self.set = os.environ["IS_SETUP"]
         if self.set == "1":
             return True
         return False
-
 
     def window_after_save(self):
         confirmed_info = [
@@ -119,7 +122,8 @@ class Gui:
                     item = "No"
                 dpg.add_text(f"{info}{item}")
             dpg.add_button(
-                label="Ok", callback=self.delete_after_save_and_lock_with_password
+                label="Ok",
+                callback=self.delete_after_save_and_lock_with_password,
             )
 
     def delete_after_save_and_lock_with_password(self):
@@ -156,29 +160,41 @@ class Gui:
             modal=True,
             no_close=True,
         ):
-            if self.password == "default":    
-                dpg.add_text("You setup your app and now can run a script, or\n"
+            if self.password == "default":
+                dpg.add_text(
+                    "You setup your app and now can run a script, or\n"
                     "You can change it's settings.\n"
-                    "NOTE: Later on this script will run automatically after 20 seconds.")            
+                    "NOTE: Later on this script will run automatically after 20 seconds."
+                )
                 dpg.add_button(
-                    label="Change Settings", tag="enter_settings", callback=lambda: dpg.delete_item("password_window")
-                )            
-                dpg.add_button(label="Run Script", tag="script_run", callback=self.exit_gui)
+                    label="Change Settings",
+                    tag="enter_settings",
+                    callback=lambda: dpg.delete_item("password_window"),
+                )
+                dpg.add_button(
+                    label="Run Script", tag="script_run", callback=self.exit_gui
+                )
             else:
                 dpg.add_text(
-                "Looks like you already configured this app.\n"
-                "Script will run automatically in 20 seconds.\n"
-                " "
+                    "Looks like you already configured this app.\n"
+                    "Script will run automatically in 20 seconds.\n"
+                    " "
                 )
-                dpg.add_text("To access settings: \n"
+                dpg.add_text(
+                    "To access settings: \n"
                     "Please type in a password which was sent to your Trusted Person.\n"
-                    " ")
+                    " "
+                )
                 dpg.add_input_text(tag="password")
                 dpg.add_button(
-                    label="Log in", tag="enter_password", callback=self.check_password
+                    label="Log in",
+                    tag="enter_password",
+                    callback=self.check_password,
                 )
-                dpg.add_button(label="Run Script", tag="script_run", callback=self.exit_gui)
-    
+                dpg.add_button(
+                    label="Run Script", tag="script_run", callback=self.exit_gui
+                )
+
     # def countdown(self):
     #     print(dpg.get_total_time())
 
@@ -193,9 +209,10 @@ class Gui:
         while dpg.is_dearpygui_running():
             if self.app_set() and dpg.does_item_exist("script_run"):
                 time = int(dpg.get_total_time()) % 10
-                dpg.configure_item("script_run", label=f"Run Script ({20 - int(time)})")
-                if 20-int(time) == 0:
+                dpg.configure_item(
+                    "script_run", label=f"Run Script ({20 - int(time)})"
+                )
+                if 20 - int(time) <= 0:
                     dpg.stop_dearpygui()
             dpg.render_dearpygui_frame()
         dpg.destroy_context()
-
