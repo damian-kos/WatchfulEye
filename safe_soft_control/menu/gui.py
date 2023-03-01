@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 from .initial_run import Menu
 import os
 from env.configure_env import Env_Configure
+from error.errors import error_handler
 
 
 class Gui:
@@ -9,7 +10,7 @@ class Gui:
         self.remaining = 10
         self.time = 1
         dpg.create_context()
-        dpg.create_viewport(title="Custom Title", width=800, height=600)
+        dpg.create_viewport(title="Custom Title", height=600, width=700)
         self.menu = Menu()
         self.my_env = Env_Configure()
         self.password = os.environ["SECRUITY_CODE"]
@@ -18,7 +19,8 @@ class Gui:
             "2. Type Trusted Person's contact email": "define_trusted_contact",
             "3. Type your's email": "senders_email",
             "4. Type your's password": "senders_password",
-            "5. Do you want to run this app everytime your machine starts up?": "autostart.ask_for_autostart_setup",
+            "5. Setup a length of words you want to be checked": "line_length",
+            "6. Do you want to run this app everytime your machine starts up?": "autostart.ask_for_autostart_setup",
         }
         self.welcome_message = (
             "Welcome to Safe Soft Control script.\n"
@@ -38,12 +40,12 @@ class Gui:
     def menu_text(self):
         for count, (choice, option) in enumerate(self.options.items()):
             dpg.add_text(choice)
-            if count == 0 or count == 4:
+            if count == 0 or count == 5:
                 dpg.add_checkbox(callback=self.checkbox_callback, tag=option)
-            elif count == 1 or count == 2:
+            elif count == 1 or count == 2 or count == 3:
                 dpg.add_input_text(tag=option, enabled=False)
-            elif count == 3:
-                dpg.add_input_text(tag=option, enabled=False)
+            else:
+                dpg.add_input_text(tag=option, enabled=True)
         dpg.add_button(
             label="Save", tag="finish", callback=self.save_button_callback
         )
@@ -60,7 +62,7 @@ class Gui:
 
     def save_button_callback(self):
         self.user_choice = []
-        for item in list(self.options.values())[:5]:
+        for item in list(self.options.values())[:6]:
             if dpg.get_value(item) == True:
                 self.user_choice.append("1")
             elif dpg.get_value(item) == False:
@@ -78,27 +80,17 @@ class Gui:
             self.menu.define_trusted_contact,
             self.menu.senders_email,
             self.menu.senders_password,
+            self.menu.line_length,
             self.menu.autostart.ask_for_autostart_setup,
         ]
-        if int(self.user_choice[0]) == 0:
-            for choice, setting in zip(self.user_choice, func_options):
-                setting(choice, agree_to_email=int(self.user_choice[0]))
-            return True
-        else:
-            for choice, setting in zip(self.user_choice, func_options):
-                if not setting(choice, agree_to_email=1):
-                    name = setting.__func__.__name__
-                    # print(f"ERROR {setting.__func__.__name__}")
-                    with dpg.window(modal=True, label="error") as error:
-                        dpg.add_text(f"{name}")
-                        dpg.add_button(
-                            label="OK",
-                            user_data=(name),
-                            width=100,
-                            callback=lambda: dpg.delete_item(error),
-                        )
-                    return False
-            return True
+        # if int(self.user_choice[0]) == 0:
+        for choice, setting in zip(self.user_choice, func_options):
+            if setting(choice, agree_to_email=self.user_choice[0]):
+                continue
+            else:
+                return False
+        self.menu.send_email_with_secruity_code()
+        return True
 
     def app_set(self):
         self.set = os.environ["IS_SETUP"]
@@ -112,6 +104,7 @@ class Gui:
             "Your Trusted Person: ",
             "Email you will send messages from: ",
             "Password: ",
+            "Minimum length of words you will be checking: "
             "You allowed app to start with every machine startup: ",
         ]
         with dpg.window(tag="saved_window", label="Saved sucessfully!"):
@@ -132,7 +125,7 @@ class Gui:
         self.app_already_setup()
 
     def create_menu_window(self):
-        with dpg.window(tag="tutorial_window", label="Tutorial"):
+        with dpg.window(tag="tutorial_window", label="Tutorial", pos=[5, 15]):
             if not self.app_set():
                 self.welcome_message = (
                     f"Hello, this is your first setup\n\n{self.welcome_message}"
@@ -195,14 +188,7 @@ class Gui:
                     label="Run Script", tag="script_run", callback=self.exit_gui
                 )
 
-    # def countdown(self):
-    #     print(dpg.get_total_time())
-
     def run_gui(self):
-        # with dpg.handler_registry(tag="widget_handler") as handler:
-        #     dpg.add_item_visible_handler(callback=self.countdown)
-
-        # dpg.bind_item_handler_registry("script_run", "widget_handler")
         dpg.setup_dearpygui()
         self.create_menu_window()
         dpg.show_viewport()

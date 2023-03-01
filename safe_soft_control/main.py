@@ -4,6 +4,7 @@ import multiprocessing
 import logging
 import datetime
 import os
+from env.configure_env import Env_Configure
 import schedule
 from logs_process.logs_processing import Logs
 import time
@@ -92,9 +93,13 @@ def consumer(que_data):
     None
     """
     print("consumer working...")
+    Env_Configure()
+    length = os.environ["LINE_LENGTH"]
     threat_path = Path(__file__).parent / "threats.txt"
     with open(threat_path, encoding="utf-8") as file:
-        threat_words = file.readlines()
+        threat_words = [
+            line.strip() for line in file if len(line.strip()) >= int(length)
+        ]
     while True:
         sentence_to_check = que_data.get()
         for word in threat_words:
@@ -102,6 +107,7 @@ def consumer(que_data):
                 word.replace("\n", "").replace(" ", "").lower()
                 in sentence_to_check.replace(" ", "").lower()
             ):
+                print("log added")
                 logging.warning(f"{sentence_to_check}:  {word}")
 
 

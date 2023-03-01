@@ -18,7 +18,6 @@ class Autostart:
         Returns:
         None
         """
-        print("Autostart")
         self.my_env = Env
         self.STARTUP_PATH = f"C:\\Users\\{os.getlogin()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
 

@@ -3,7 +3,7 @@ import os
 from contact.trusted_person import Person
 from env.configure_env import Env_Configure
 from autostart.autostart import Autostart
-
+from error.errors import error_handler
 
 
 class Menu:
@@ -44,38 +44,54 @@ class Menu:
             return False
         return True
 
-    def define_trusted_contact(self, choice, agree_to_email=0):
-        if agree_to_email == 0:
+    def define_trusted_contact(self, choice, agree_to_email="0"):
+        if agree_to_email == "0":
             trusted_contact_tuple = ("TRUSTED_CONTACT", choice)
             self.save_in_dotenv(trusted_contact_tuple)
             return True
-        if self.check_email(choice):
-            trusted_contact_tuple = ("TRUSTED_CONTACT", choice)
-            self.save_in_dotenv(trusted_contact_tuple)
-            return True
+        elif agree_to_email == "1":
+            if self.check_email(choice):
+                trusted_contact_tuple = ("TRUSTED_CONTACT", choice)
+                self.save_in_dotenv(trusted_contact_tuple)
+                return True
+            error_handler("Trusted contact")
         return False
 
-    def senders_email(self, choice, agree_to_email=0):
-        if agree_to_email == 0:
+    def senders_email(self, choice, agree_to_email="0"):
+        if agree_to_email == "0":
             trusted_contact_tuple = ("SENDERS_EMAIL", choice)
             self.save_in_dotenv(trusted_contact_tuple)
             return True
-        if self.check_email(choice):
-            senders_email_tuple = ("SENDERS_EMAIL", choice)
-            self.save_in_dotenv(senders_email_tuple)
-            return True
+        elif agree_to_email == "1":
+            if self.check_email(choice):
+                senders_email_tuple = ("SENDERS_EMAIL", choice)
+                self.save_in_dotenv(senders_email_tuple)
+                return True
+            error_handler("Senders email")
         return False
 
-    def senders_password(self, password, agree_to_email=0):
-        if agree_to_email == 0:
+    def senders_password(self, password, agree_to_email="0"):
+        if agree_to_email == "0":
             trusted_contact_tuple = ("SENDERS_PASSWORD", password)
             self.save_in_dotenv(trusted_contact_tuple)
             return True
-        senders_password_tuple = ("SENDERS_PASSWORD", password)
-        self.save_in_dotenv(senders_password_tuple)
-        self.send_email_with_secruity_code()
-        return True
+        elif agree_to_email == "1":
+            if len(password) != 16:
+                error_handler("Too short password")
+                return False
+            trusted_contact_tuple = ("SENDERS_PASSWORD", password)
+            self.save_in_dotenv(trusted_contact_tuple)
+            return True
 
+    def line_length(self, choice, agree_to_email="0"):
+        key = "LINE_LENGTH"
+        try:
+            try_to_int = int(choice)
+            self.my_env.configure_env_var(key=key, value=choice)
+            return True
+        except:
+            error_handler("Length needs to be a number")
+            return False
 
     @staticmethod
     def send_email_with_secruity_code():
@@ -83,7 +99,6 @@ class Menu:
         code = person.create_secruity_code()
         person.save_secruity_code(code)
         person.email_with_secruity_code()
-
 
     def check_secruity_code(self):
         self.secruity_code = os.environ["SECRUITY_CODE"]
@@ -101,4 +116,3 @@ class Menu:
     def finish(self):
         self.menu_flag = False
         return True
-
