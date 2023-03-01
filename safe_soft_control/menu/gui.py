@@ -83,13 +83,14 @@ class Gui:
             self.menu.line_length,
             self.menu.autostart.ask_for_autostart_setup,
         ]
-        # if int(self.user_choice[0]) == 0:
+
         for choice, setting in zip(self.user_choice, func_options):
             if setting(choice, agree_to_email=self.user_choice[0]):
                 continue
             else:
                 return False
-        self.menu.send_email_with_secruity_code()
+        if (self.user_choice[0]) == "1":
+            self.menu.send_email_with_secruity_code()
         return True
 
     def app_set(self):
@@ -104,24 +105,28 @@ class Gui:
             "Your Trusted Person: ",
             "Email you will send messages from: ",
             "Password: ",
-            "Minimum length of words you will be checking: "
+            "Minimum length of words you will be checking: ",
             "You allowed app to start with every machine startup: ",
         ]
-        with dpg.window(tag="saved_window", label="Saved sucessfully!"):
+        with dpg.window(
+            tag="saved_window",
+            modal=True,
+            popup=True,
+            label="Saved succesfully!",
+            on_close=self.delete_after_save_and_lock_with_password,
+        ) as saved:
             for info, item in zip(confirmed_info, self.user_choice):
                 if item == "1":
                     item = "Yes"
                 elif item == "0":
                     item = "No"
                 dpg.add_text(f"{info}{item}")
-            dpg.add_button(
-                label="Ok",
-                callback=self.delete_after_save_and_lock_with_password,
-            )
+            dpg.add_text("\nYou can close a popup window with X now.")
 
     def delete_after_save_and_lock_with_password(self):
-        dpg.delete_item("saved_window")
+        dpg.remove_alias("saved_window")
         self.password = os.environ["SECRUITY_CODE"]
+        print(self.password)
         self.app_already_setup()
 
     def create_menu_window(self):
@@ -146,10 +151,11 @@ class Gui:
 
     def app_already_setup(self):
         with dpg.window(
+            no_open_over_existing_popup=True,
             tag="password_window",
             label="Password",
             width=500,
-            pos=(200, 100),
+            pos=(30, 100),
             modal=True,
             no_close=True,
         ):
