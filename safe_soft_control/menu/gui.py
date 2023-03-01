@@ -126,7 +126,6 @@ class Gui:
     def delete_after_save_and_lock_with_password(self):
         dpg.remove_alias("saved_window")
         self.password = os.environ["SECRUITY_CODE"]
-        print(self.password)
         self.app_already_setup()
 
     def create_menu_window(self):
