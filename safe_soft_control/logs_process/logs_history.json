@@ -1,1 +1,7 @@
-{"log_20230209.log": true, "log_20230210.log": false, "log_20230211.log": true, "log_20230212.log": true, "log_20230213.log": false, "log_20230214.log": false, "log_20230215.log": true, "example_log.log": true, "log_20230220.log": false}
+{
+    "log_20230209.log": true,
+    "log_20230210.log": false,
+    "log_20230211.log": true,
+    "log_20230212.log": true,
+    "log_20230213.log": false
+}

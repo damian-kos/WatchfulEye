@@ -10,7 +10,7 @@ class Gui:
         self.remaining = 10
         self.time = 1
         dpg.create_context()
-        dpg.create_viewport(title="Custom Title", height=600, width=700)
+        dpg.create_viewport(title="WatchfulEye", height=600, width=700)
         self.menu = Menu()
         self.my_env = Env_Configure()
         self.password = os.environ["SECRUITY_CODE"]
@@ -129,7 +129,7 @@ class Gui:
         self.app_already_setup()
 
     def create_menu_window(self):
-        with dpg.window(tag="tutorial_window", label="Tutorial", pos=[5, 15]):
+        with dpg.window(tag="tutorial_window", label="Settings", pos=[5, 15]):
             if not self.app_set():
                 self.welcome_message = (
                     f"Hello, this is your first setup\n\n{self.welcome_message}"
@@ -199,11 +199,11 @@ class Gui:
         dpg.show_viewport()
         while dpg.is_dearpygui_running():
             if self.app_set() and dpg.does_item_exist("script_run"):
-                time = int(dpg.get_total_time()) % 10
+                time = int(dpg.get_total_time()) % 20
                 dpg.configure_item(
                     "script_run", label=f"Run Script ({20 - int(time)})"
                 )
-                if 20 - int(time) <= 0:
+                if 20 - int(time) <= 1:
                     dpg.stop_dearpygui()
             dpg.render_dearpygui_frame()
         dpg.destroy_context()
