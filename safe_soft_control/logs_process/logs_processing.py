@@ -12,7 +12,7 @@ class Logs:
         self.files_list = self.get_logs_from_dir()
         self.current_log = self.determine_current_log()
         self.past_logs = self.get_past_logs()
-        self.email_subject = f"Safe Soft Control - Suspicious Activity Spotted"
+        self.email_subject = f"WatchfulEye - Suspicious Activity Spotted"
         self.email_message_content = (
             f"It is possible that an user of this software who chosen you as a safe person has done some supicious acitivy. In attachment you can find his current log.\n"
             f"Just open it to find out more."

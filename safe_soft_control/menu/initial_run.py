@@ -11,7 +11,7 @@ class Menu:
         self.my_env = Env_Configure()
         self.autostart = Autostart(self.my_env)
         self.welcome_message = (
-            "Welcome to Safe Soft Control script.\n"
+            "Welcome WatrchfulEye script.\n"
             "\nIts idea is to log your keystrokes.\n"
             "If it happens that you will type any words, name or websites which can be"
             "considered as threat.\n"

@@ -23,7 +23,7 @@ class Gui:
             "6. Do you want to run this app everytime your machine starts up?": "autostart.ask_for_autostart_setup",
         }
         self.welcome_message = (
-            "Welcome to Safe Soft Control script.\n"
+            "Welcome to WatchfulEye script.\n"
             "\nIts idea is to log your keystrokes.\n"
             "If it happens that you will type any words, name or websites which can be"
             "considered as threat.\n"

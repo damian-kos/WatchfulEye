@@ -42,7 +42,7 @@ class Person:
         """
         Sends an email with the current security code to the user.
         """
-        email_subject = f"Safe Soft Control"
+        email_subject = f"WatchfulEye"
         email_message_code = (
             f"Here is your SECRUITY_CODE: {os.environ['SECRUITY_CODE']}"
         )
