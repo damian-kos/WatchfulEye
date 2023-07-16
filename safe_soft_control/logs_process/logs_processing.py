@@ -47,7 +47,7 @@ class Logs:
         return logs_list_without_current_log
 
     def check_lines_in_logs(self, log_file) -> int:
-        with open(os.path.join(self.path, log_file), "r") as log_f:
+        with open(os.path.join(self.path, log_file), "r", encoding="utf-8") as log_f:
             lines = log_f.readlines()
             return len(lines)
 
@@ -56,7 +56,6 @@ class Logs:
         with open(path, "r", encoding="utf-8") as f:
             try:
                 sent_logs = json.load(f)
-
                 for log in sent_logs:
                     if log in log_list:
                         log_list.remove(log)
